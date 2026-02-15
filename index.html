@@ -15,6 +15,9 @@
         input[type="range"] { accent-color: #8d5524; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .nav-btn { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); color: white; transition: all 0.3s; }
+        .nav-btn:hover { background: rgba(141, 85, 36, 0.8); transform: scale(1.1); }
+        .nav-btn:disabled { opacity: 0.1; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -24,8 +27,8 @@
         const { useState, useEffect, useRef } = React;
 
         // Icons implementation using SVG
-        const ChevronLeft = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>;
-        const ChevronRight = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
+        const ChevronLeft = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>;
+        const ChevronRight = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
         const BookOpen = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/></svg>;
         const Play = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
         const Pause = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
@@ -42,31 +45,31 @@
             { tr: "Ramazan Pidesi", en: "Ramadan Flatbread", fa: "پیده رمضان", img: "./images/img03.png", descEn: "Ramazan Pidesi is a soft flatbread specifically baked during Ramadan. It has a hand-pressed diamond pattern and is topped with sesame and nigella seeds.", descTr: "Ramazan ayına özel üretilen, yumuşak ve kabarık geleneksel pidedir.", descFa: "پیده رمضان نان گرد و صافی است که مخصوص ماه مبارک رمضان پخته می‌شود." },
             { tr: "Açma", en: "Soft Fluffy Pastry", fa: "آچما", img: "./images/img04.png", descEn: "Açma is a savory Turkish pastry known for its incredibly soft and oily texture, closer to a brioche. It is a favorite for leisurely breakfasts.", descTr: "Simit şekline sahip ancak çok daha yumuşak ve yağlı bir hamur işidir.", descFa: "آچما نانی شبیه به سیمیت اما بسیار نرم‌تر و روغنی‌تر است." },
             { tr: "Poğaça", en: "Savory Stuffed Bun", fa: "پوآچا", img: "./images/img05.png", descEn: "Poğaça is a versatile savory bun often stuffed with fillings like feta cheese, olives, or minced meat. Perfect for a quick snack.", descTr: "Peynirli, kıymalı veya zeytinli çeşitleri bulunan کوچک poğaçalarıdır.", descFa: "پوآچا نان‌های کوچک و حجیمی هستند که داخلشان با پنیر، گوشت یا زیتون پر می‌شود." },
-            { tr: "Gözleme", en: "Stuffed Flatbread", fa: "گوزلمه", img: "./images/img06.png", descEn: "Gözleme is a traditional Anatolian dish of thin dough sheets filled with spinach, potatoes, or cheese, cooked on a metal griddle.", descTr: "İncecik açılan hamurun içine ıspanak, peynir veya patates konularak sac üzerinde pişirildiği lezzettir.", descFa: "گوزلمه لایه‌های بسیار نازک خمیر است که با موادی مثل اسفناج و پنیر پر شده و روی ساج پخته می‌شود." },
-            { tr: "Bazlama", en: "Village Flatbread", fa: "بازلاما", img: "./images/img07.png", descEn: "Bazlama is a single-layered, thick village bread with a soft spongy texture, traditionally cooked on a pan without oil.", descTr: "Geleneksel bir köy ekmeği olan bazlama, kalın ve mayalı bir hamurdan yapılır.", descFa: "بازلاما نان سنتی روستایی، ضخیم و نرم است." },
-            { tr: "Mısır Ekmeği", en: "Black Sea Cornbread", fa: "نان ذرت", img: "./images/img08.png", descEn: "Unique cornbread from the Black Sea region. Dense, salty, and crumbly, often served with yogurt.", descTr: "Karadeniz bölgesine özgü, mısır unundan yapılan lezzetli bir ekmektir.", descFa: "نان ذرت مخصوص منطقه دریای سیاه، متراکم و بسیار خوش‌طعم است." },
-            { tr: "Paskalya Çöreği", en: "Easter Sweet Bread", fa: "نان گیس‌باف", img: "./images/img09.png", descEn: "Sweet braided bread flavored with mahleb and mastic. It is enjoyed for its soft texture and almond-topped crust.", descTr: "Mahlep ve sakızla tatlandırılan, örgü şeklinde tatlı bir çörek türüdür.", descFa: "نان شیرین گیس‌باف با عطر محلب و سقز." },
+            { tr: "Gözleme", en: "Stuffed Flatbread", fa: "گوزلمه", img: "./images/img06.png", descEn: "Gözleme is a traditional Anatolian dish of thin dough sheets filled with spinach, potatoes, or cheese, cooked on a metal griddle.", descTr: "İncecik açılan hamurun içine ıspanak، peynir veya patates konularak sac üzerinde pişirildiği lezzettir.", descFa: "گوزلمه لایه‌های بسیار نازک خمیر است که با موادی مثل اسفناج و پنیر پر شده و روی ساج پخته می‌شود." },
+            { tr: "Bazlama", en: "Village Flatbread", fa: "بازلاما", img: "./images/img07.png", descEn: "Bazlama is a single-layered, thick village bread with a soft spongy texture, traditionally cooked on a pan without oil.", descTr: "Geleneksel bir köy ekmeği olan bazlama، kalın ve mayalı bir hamurdan yapılır.", descFa: "بازلاما نان سنتی روستایی، ضخیم و نرم است." },
+            { tr: "Mısır Ekmeği", en: "Black Sea Cornbread", fa: "نان ذرت", img: "./images/img08.png", descEn: "Unique cornbread from the Black Sea region. Dense, salty, and crumbly, often served with yogurt.", descTr: "Karadeniz bölgesine özgü، mısır unundan yapılan lezzetli bir ekmektir.", descFa: "نان ذرت مخصوص منطقه دریای سیاه، متراکم و بسیار خوش‌طعم است." },
+            { tr: "Paskalya Çöreği", en: "Easter Sweet Bread", fa: "نان گیس‌باف", img: "./images/img09.png", descEn: "Sweet braided bread flavored with mahleb and mastic. It is enjoyed for its soft texture and almond-topped crust.", descTr: "Mahlep ve sakızla tatlandırılan، örgü şeklinde tatlı bir çörek türüdür.", descFa: "نان شیرین گیس‌باف با عطر محلب و سقز." },
             { tr: "Kandil Simidi", en: "Small Festival Rings", fa: "کاندیل سیمیدی", img: "./images/img10.png", descEn: "Small, crunchy savory rings coated in sesame or nigella seeds, baked for holy nights.", descTr: "Kandil gecelerine özel pişirilen gevrek کوچک halka çöreklerdir.", descFa: "حلقه‌های کوچک و ترد کنجدی که در شب‌های متبرک مذهبی پخته می‌شوند." },
-            { tr: "Lavaş", en: "Lavash Flatbread", fa: "لواش", img: "./images/img11.png", descEn: "Thin, soft flatbread essential for wraps. It puffs up beautifully when baked in a traditional clay oven.", descTr: "Kebabların yanında kullanılan incecik ve yumuşak bir lavaش ekmeğidir.", descFa: "نان نازک و نرمی که برای تهیه لقمه‌های کباب استفاده می‌شود." },
+            { tr: "Lavaş", en: "Lavash Flatbread", fa: "لواش", img: "./images/img11.png", descEn: "Thin, soft flatbread essential for wraps. It puffs up beautifully when baked in a traditional clay oven.", descTr: "Kebabların yanında kullanılan incecik و yumuşak یک lavaش ekmeğidir.", descFa: "نان نازک و نرمی که برای تهیه لقمه‌های کباب استفاده می‌شود." },
             { tr: "Trabzon Ekmeği", en: "Stone-Oven Bread", fa: "نان ترابزون", img: "./images/img12.png", descEn: "Massive sourdough loaf from the Trabzon region, baked in stone ovens to stay fresh for days.", descTr: "Trabzon'un Vakfıkebir ilçesine özgü taş fırınlarda pişen büyük bir ekmektir.", descFa: "نان غول‌پیکر و گردی از منطقه ترابزون." },
-            { tr: "Boyoz", en: "Izmir Flaky Pastry", fa: "بویوز", img: "./images/img13.png", descEn: "Unique flaky pastry from Izmir, traditionally eaten for breakfast with hard-boiled eggs.", descTr: "İzmir mutfağına özgü, mayasız ve yağlı bir hamur işidir.", descFa: "شیرینی لایه‌لایه‌ای مخصوص ازمیر." },
+            { tr: "Boyoz", en: "Izmir Flaky Pastry", fa: "بویوز", img: "./images/img13.png", descEn: "Unique flaky pastry from Izmir, traditionally eaten for breakfast with hard-boiled eggs.", descTr: "İzmir mutfağına özgü، mayasız ve yağlı یک hamur işidir.", descFa: "شیرینی لایه‌لایه‌ای مخصوص ازمیر." },
             { tr: "Kumru", en: "Izmir Sandwich Bread", fa: "کومرو", img: "./images/img14.png", descEn: "Dove-shaped bread made with chickpea yeast, typically grilled for sandwiches.", descTr: "Nohut mayasıyla yapılan İzmir sandviç ekmeğidir.", descFa: "نان ساندویچی با مخمر نخود که به شکل کبوتر است." },
             { tr: "Tahinli Çörek", en: "Tahini Sweet Roll", fa: "نان ارده‌ای", img: "./images/img15.png", descEn: "Sweet spiral pastry filled with tahini and sugar, rich and nutty.", descTr: "İçine tahin ve şeker sürülerek rulo yapılan یک چörektir.", descFa: "شیرینی مارپیچی پر شده با خمیر ارده و شکر." },
             { tr: "Su Böreği", en: "Water Borek", fa: "سو بورگی", img: "./images/img16.png", descEn: "Complex pastry with sheets of boiled dough layered with butter and cheese.", descTr: "Hamur katmanlarının haşlanmasıyla yapılan çok خاص bir börektir.", descFa: "بورکی که لایه‌های خمیر آن قبل از پخت جوشانده می‌شوند." },
             { tr: "Sigara Böreği", en: "Cigarette Rolls", fa: "سیگارا بورگی", img: "./images/img17.png", descEn: "Cigar-shaped fried pastries filled with white cheese and parsley.", descTr: "Yufka içine peynir sarılarak kızartılan çıtır atıştرمالıklarıdır.", descFa: "بورک‌های ترد سرخ‌شده به شکل سیگار پر از پنیر." },
-            { tr: "Revani", en: "Semolina Cake", fa: "روانی", img: "./images/img18.png", descEn: "Classic Ottoman semolina sponge cake soaked in light sugar syrup.", descTr: "İrmik ile yapılan شerbetli klasik bir Türk tatlısıdır.", descFa: "کیک اسفنجی سمولینا غوطه‌ور در شربت." },
-            { tr: "Şekerpare", en: "Semolina Cookies", fa: "شکرپاره", img: "./images/img19.png", descEn: "Soft semolina cookies soaked in syrup, decorated with a whole hazelnut.", descTr: "Şerbetle tatlandırılan ağızda dağılan bir kurabiye tatlısıdır.", descFa: "شیرینی‌های گرد سمولینا در شربت." },
-            { tr: "Ay Çöreği", en: "Crescent Pastry", fa: "شیرینی هلالی", img: "./images/img20.png", descEn: "Crescent-shaped sweet pastry filled with cocoa, cake crumbs, raisins, and walnuts.", descTr: "İçi kakaolu ve fındıklı harçla dolu tatlı bir pastane klasiğidir.", descFa: "شیرینی هلالی شکلی با مغز کاکائو و گردو." },
-            { tr: "Çatal", en: "Savory Fork Pastry", fa: "شیرینی چنگالی", img: "./images/img21.png", descEn: "Dry, savory pastry flavored with mahleb and nigella seeds, shaped like a fork.", descTr: "Mahlepli tadı ve çatalı andıran şekliyle tuzlu bir kurabiyedir.", descFa: "شیرینی ترد و نمکی با طعم محلب." },
-            { tr: "Galeta", en: "Turkish Breadsticks", fa: "گالتا", img: "./images/img22.png", descEn: "Hard, twice-baked breadsticks, common as a healthy, crunchy snack.", descTr: "Kurutulmuş, gevrek bir atıştırmalık ekmek türüdür.", descFa: "چوب‌شورهای نانی یا نان‌های سوخاری بسیار ترد." },
-            { tr: "Zeytinli Ekmek", en: "Olive Bread", fa: "نان زیتون", img: "./images/img23.png", descEn: "Fragrant artisan loaf infused with savory black or green olives and oregano.", descTr: "İçine zeytin ve kekik katılarak hazırlanan lezzetli bir ekmektir.", descFa: "نانی معطر که با زیتون‌های سیاه یا سبز طعم‌دار شده است." },
-            { tr: "Tam Buğday Ekmeği", en: "Whole Wheat Bread", fa: "نان گندم کامل", img: "./images/img24.png", descEn: "Healthy fiber-rich alternative made from unrefined flour.", descTr: "Rafine edilmemiş buğday unundan yapılan sağlıklı bir ekmektir.", descFa: "نان گندم کامل سرشار از فیبر." },
-            { tr: "Çavdar Ekmeği", en: "Rye Bread", fa: "نان چاودار", img: "./images/img25.png", descEn: "Dark, aromatic bread made with rye flour, dense and slightly sour.", descTr: "Çavdar unundan yapılan koyu renkli aromatik bir ekmek türüdür.", descFa: "نان تیره و معطر تهیه شده از آرد چاودار." },
+            { tr: "Revani", en: "Semolina Cake", fa: "روانی", img: "./images/img18.png", descEn: "Classic Ottoman semolina sponge cake soaked in light sugar syrup.", descTr: "İrmik ile yapılan شerbetli klasik یک Türk tatlısıdır.", descFa: "کیک اسفنجی سمولینا غوطه‌ور در شربت." },
+            { tr: "Şekerpare", en: "Semolina Cookies", fa: "شکرپاره", img: "./images/img19.png", descEn: "Soft semolina cookies soaked in syrup, decorated with a whole hazelnut.", descTr: "Şerbetle tatlandırılan ağızda dağılan یک kurabiye tatlısıdır.", descFa: "شیرینی‌های گرد سمولینا در شربت." },
+            { tr: "Ay Çöreği", en: "Crescent Pastry", fa: "شیرینی هلالی", img: "./images/img20.png", descEn: "Crescent-shaped sweet pastry filled with cocoa, cake crumbs, raisins, and walnuts.", descTr: "İçi kakaolu ve fındıklı harçla dolu tatlı یک pastane klasiğidir.", descFa: "شیرینی هلالی شکلی با مغز کاکائو و گردو." },
+            { tr: "Çatal", en: "Savory Fork Pastry", fa: "شیرینی چنگالی", img: "./images/img21.png", descEn: "Dry, savory pastry flavored with mahleb and nigella seeds, shaped like a fork.", descTr: "Mahlepli tadı ve çatalı andıran şekliyle tuzlu یک kurabiyedir.", descFa: "شیرینی ترد و نمکی با طعم محلب." },
+            { tr: "Galeta", en: "Turkish Breadsticks", fa: "گالتا", img: "./images/img22.png", descEn: "Hard, twice-baked breadsticks, common as a healthy, crunchy snack.", descTr: "Kurutulmuş، gevrek یک atıştırmalık ekmek türüdür.", descFa: "چوب‌شورهای نانی یا نان‌های سوخاری بسیار ترد." },
+            { tr: "Zeytinli Ekmek", en: "Olive Bread", fa: "نان زیتون", img: "./images/img23.png", descEn: "Fragrant artisan loaf infused with savory black or green olives and oregano.", descTr: "İçine zeytin ve kekik katılarak hazırlanan lezzetli یک ekmektir.", descFa: "نانی معطر که با زیتون‌های سیاه یا سبز طعم‌دار شده است." },
+            { tr: "Tam Buğday Ekmeği", en: "Whole Wheat Bread", fa: "نان گندم کامل", img: "./images/img24.png", descEn: "Healthy fiber-rich alternative made from unrefined flour.", descTr: "Rafine edilmemiş buğday unundan yapılan sağlıklı یک ekmektir.", descFa: "نان گندم کامل سرشار از فیبر." },
+            { tr: "Çavdar Ekmeği", en: "Rye Bread", fa: "نان چاودار", img: "./images/img25.png", descEn: "Dark, aromatic bread made with rye flour, dense and slightly sour.", descTr: "Çavdar unundan yapılan koyu renkli aromatik یک ekmek türüdür.", descFa: "نان تیره و معطر تهیه شده از آرد چاودار." },
             { tr: "Somun Ekmek", en: "Artisan Oval Loaf", fa: "نان صومون", img: "./images/img26.png", descEn: "Classic oval-shaped loaf with a thick crust, a bakery standard.", descTr: "Fırınlarda en çok satılan klasik oval ekmek türüdür.", descFa: "نان بیضی شکل معمولی رایج در نانوایی‌ها." },
             { tr: "Tandır Ekmeği", en: "Tandoor Flatbread", fa: "نان تنوری", img: "./images/img27.png", descEn: "Rustic flatbread baked against the walls of a clay tandoor oven.", descTr: "Geleneksel toprak tandırlarda pişen mis kokulu köy ekmeğidir.", descFa: "نان سنتی پخته شده در تنورهای سفالی." },
-            { tr: "Susamlı Pide", en: "Sesame Flatbread", fa: "پیده کنجدی", img: "./images/img28.png", descEn: "Oval flatbread generously topped with sesame seeds for a nutty crunch.", descTr: "Bol susamlı fırından yeni çıkmış çıtır çıtır bir pidedir.", descFa: "نان پیده بلند و بیضی شکلی با پوشش کنجد." },
-            { tr: "Kol Böreği", en: "Spiral Savory Pastry", fa: "کول بورگی", img: "./images/img29.png", descEn: "Long spiral pastry rolls with crispy texture and meat or cheese fillings.", descTr: "Uzun ince hamurun rulo yapılıp pişirildiği bir börektir.", descFa: "بورک درازی که به صورت مارپیچ پیچیده شده است." },
-            { tr: "Laz Böreği", en: "Sweet Custard Filo", fa: "لاز بورگی", img: "./images/img30.png", descEn: "Sweet dessert with many filo layers filled with velvety custard and syrup.", descTr: "Karadeniz'e özgü içi muhallebi dolu şerbetli bir tatlıdır.", descFa: "شیرینی مخصوص منطقه دریای سیاه با کرم غلیظ و شربت." }
+            { tr: "Susamlı Pide", en: "Sesame Flatbread", fa: "پیده کنجدی", img: "./images/img28.png", descEn: "Oval flatbread generously topped with sesame seeds for a nutty crunch.", descTr: "Bol susamlı fırından yeni çıkmış çıtır çıtır یک pidedir.", descFa: "نان پیده بلند و بیضی شکلی با پوشش کنجد." },
+            { tr: "Kol Böreği", en: "Spiral Savory Pastry", fa: "کول بورگی", img: "./images/img29.png", descEn: "Long spiral pastry rolls with crispy texture and meat or cheese fillings.", descTr: "Uzun ince hamurun rulo yapılıp pişirildiği یک börektir.", descFa: "بورک درازی که به صورت مارپیچ پیچیده شده است." },
+            { tr: "Laz Böreği", en: "Sweet Custard Filo", fa: "لاز بورگی", img: "./images/img30.png", descEn: "Sweet dessert with many filo layers filled with velvety custard and syrup.", descTr: "Karadeniz'e özgü içi muhallebi dolu şerbetli یک tatlıdır.", descFa: "شیرینی مخصوص منطقه دریای سیاه با کرم غلیظ و شربت." }
         ];
 
         const App = () => {
@@ -87,7 +90,6 @@
             const playTTS = () => {
                 if (lang === 'fa') return;
                 
-                // If already playing, stop it (toggle behavior)
                 if (isPlaying) {
                     stopAudio();
                     return;
@@ -101,7 +103,6 @@
                 utterance.rate = playbackRate;
                 utterance.volume = volume;
 
-                // Try to find a good voice for the selected language
                 const voices = synth.getVoices();
                 const selectedVoice = voices.find(v => v.lang.startsWith(langCode));
                 if (selectedVoice) utterance.voice = selectedVoice;
@@ -114,7 +115,6 @@
                 synth.speak(utterance);
             };
 
-            // Cleanup on page change
             useEffect(() => {
                 stopAudio();
             }, [currentPage, lang]);
@@ -154,8 +154,29 @@
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                         onError={(e) => { e.target.src = "https://via.placeholder.com/800x800?text=Bread+Image"; }}
                                     />
+
+                                    {/* Overlaid Navigation Buttons */}
+                                    <div className="absolute inset-y-0 left-0 flex items-center px-4">
+                                        <button 
+                                            onClick={prevPage}
+                                            className="nav-btn p-3 rounded-full shadow-2xl z-20"
+                                            title="صفحه قبل"
+                                        >
+                                            <ChevronRight />
+                                        </button>
+                                    </div>
+                                    <div className="absolute inset-y-0 right-0 flex items-center px-4">
+                                        <button 
+                                            onClick={nextPage}
+                                            disabled={currentPage === breadData.length - 1}
+                                            className="nav-btn p-3 rounded-full shadow-2xl z-20"
+                                            title="صفحه بعد"
+                                        >
+                                            <ChevronLeft />
+                                        </button>
+                                    </div>
                                     
-                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] glass rounded-3xl p-5 flex flex-col gap-4 shadow-2xl">
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] glass rounded-3xl p-5 flex flex-col gap-4 shadow-2xl z-10">
                                         <div className="flex items-center justify-between gap-6">
                                             <button onClick={playTTS} disabled={lang === 'fa'} className={`p-4 rounded-full shadow-lg transition-all ${lang === 'fa' ? 'bg-stone-300 opacity-50 cursor-not-allowed' : 'bg-[#8d5524] hover:bg-[#5d3a1a] text-white'}`}>
                                                 {isPlaying ? <Pause size={28} /> : <Play size={28} />}
@@ -184,7 +205,7 @@
                                         <div className="flex justify-between items-center mb-8">
                                             <div className="flex gap-2">
                                                 {['en', 'tr', 'fa'].map(l => (
-                                                    <button key={l} onClick={() => setLang(l)} className={`w-10 h-10 flex items-center justify-center rounded-xl text-xs font-black border-2 transition-all ${lang === l ? 'bg-[#8d5524] text-white border-[#8d5524] shadow-md' : 'text-stone-400 border-stone-100 hover:border-stone-300'}`}>{l.toUpperCase()}</button>
+                                                    <button key={l} onClick={() => { stopAudio(); setLang(l); }} className={`w-10 h-10 flex items-center justify-center rounded-xl text-xs font-black border-2 transition-all ${lang === l ? 'bg-[#8d5524] text-white border-[#8d5524] shadow-md' : 'text-stone-400 border-stone-100 hover:border-stone-300'}`}>{l.toUpperCase()}</button>
                                                 ))}
                                             </div>
                                             <span className="text-stone-300 font-mono font-bold">{currentPage + 1} / {breadData.length}</span>
@@ -227,14 +248,8 @@
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between" dir="rtl">
-                                            <button onClick={prevPage} className="p-4 bg-stone-100 rounded-2xl hover:bg-stone-200 text-stone-600 transition-all hover:scale-105">
-                                                <ChevronRight />
-                                            </button>
-                                            <div className="text-[10px] text-stone-300 font-black uppercase tracking-[0.2em]">Istanbul Bakery © 2024</div>
-                                            <button onClick={nextPage} disabled={currentPage === breadData.length - 1} className={`p-4 rounded-2xl transition-all hover:scale-105 ${currentPage === breadData.length - 1 ? 'bg-stone-50 text-stone-200 cursor-not-allowed' : 'bg-stone-100 hover:bg-stone-200 text-stone-600'}`}>
-                                                <ChevronLeft />
-                                            </button>
+                                        <div className="flex items-center justify-center">
+                                            <div className="text-[10px] text-stone-300 font-black uppercase tracking-[0.2em]">Istanbul Bakery Heritage © 2024</div>
                                         </div>
                                     </div>
                                 </div>

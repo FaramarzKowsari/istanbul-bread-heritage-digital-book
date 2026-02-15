@@ -1,1 +1,311 @@
 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scent of Istanbul - Turkish Bread Guide</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        input[type="range"] { accent-color: #8d5524; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Icons implementation using SVG
+        const ChevronLeft = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>;
+        const ChevronRight = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
+        const BookOpen = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/></svg>;
+        const Play = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+        const Pause = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
+        const Volume2 = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>;
+        const FastForward = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>;
+        const Mail = ({size=14}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>;
+        const Linkedin = ({size=14}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>;
+        const ExternalLink = ({size=14}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 22 3 22 10"/><line x1="10" x2="22" y1="14" y2="2"/></svg>;
+        const Loader2 = ({size=24, className=""}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>;
+        const Info = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+
+        const breadData = [
+            { tr: "Simit", en: "Turkish Sesame Bagel", fa: "سیمیت", img: "./images/img01.png", descEn: "Simit is the most iconic Turkish street food, a circular bread encrusted with sesame seeds. Before baking, it is dipped in grape molasses (pekmez), which gives it its characteristic dark golden color and slightly sweet-savory crust.", descTr: "Simit, pekmeze batırılıp susamla kaplanarak pişirilen, halka şeklindeki çıtır ekmektir.", descFa: "سیمیت نان حلقه‌ای تردی است که با شیره انگور آغشته و در کنجد فراوان غلتانده می‌شود." },
+            { tr: "Ekmek", en: "Traditional White Bread", fa: "اکمک", img: "./images/img02.png", descEn: "Ekmek is the quintessential Turkish bread, served with almost every meal. It is a white, sourdough-leavened bread with a very crispy crust and a light, airy interior.", descTr: "Ekmek, Türk sofralarının temel taşıdır. Dışı çıtır içi yumuşak beyaz ekmektir.", descFa: "اکمک نان سفید معمولی و پایه اصلی هر وعده غذایی در ترکیه است." },
+            { tr: "Ramazan Pidesi", en: "Ramadan Flatbread", fa: "پیده رمضان", img: "./images/img03.png", descEn: "Ramazan Pidesi is a soft flatbread specifically baked during Ramadan. It has a hand-pressed diamond pattern and is topped with sesame and nigella seeds.", descTr: "Ramazan ayına özel üretilen، yumuşak ve kabarık geleneksel pidedir.", descFa: "پیده رمضان نان گرد و صافی است که مخصوص ماه مبارک رمضان پخته می‌شود." },
+            { tr: "Açما", en: "Soft Fluffy Pastry", fa: "آچما", img: "./images/img04.png", descEn: "Açma is a savory Turkish pastry known for its incredibly soft and oily texture, closer to a brioche. It is a favorite for leisurely breakfasts.", descTr: "Simit şekline sahip ancak çok daha yumuşak ve yağlı bir hamur işidir.", descFa: "آچما نانی شبیه به سیمیت اما بسیار نرم‌تر و روغنی‌تر است." },
+            { tr: "Poğaça", en: "Savory Stuffed Bun", fa: "پوآچا", img: "./images/img05.png", descEn: "Poğaça is a versatile savory bun often stuffed with fillings like feta cheese, olives, or minced meat. Perfect for a quick snack.", descTr: "Peynirli، kıymalı veya zeytinli çeşitleri bulunan کوچک poğaçalarıdır.", descFa: "پوآچا نان‌های کوچک و حجیمی هستند که داخلشان با پنیر، گوشت یا زیتون پر می‌شود." },
+            { tr: "Gözleme", en: "Stuffed Flatbread", fa: "گوزلمه", img: "./images/img06.png", descEn: "Gözleme is a traditional Anatolian dish of thin dough sheets filled with spinach, potatoes, or cheese, cooked on a metal griddle.", descTr: "İncecik açılan hamurun içine ıspanak، peynir veya patates konularak sac üzerinde pişirildiği lezzettir.", descFa: "گوزلمه لایه‌های بسیار نازک خمیر است که با موادی مثل اسفناج و پنیر پر شده و روی ساج پخته می‌شود." },
+            { tr: "Bazlama", en: "Village Flatbread", fa: "بازلاما", img: "./images/img07.png", descEn: "Bazlama is a single-layered, thick village bread with a soft spongy texture, traditionally cooked on a pan without oil.", descTr: "Geleneksel bir köy ekmeği olan bazlama، kalın ve mayalı bir hamurdan yapılır.", descFa: "بازلاما نان سنتی روستایی، ضخیم و نرم است." },
+            { tr: "Mısır Ekmeği", en: "Black Sea Cornbread", fa: "نان ذرت", img: "./images/img08.png", descEn: "Unique cornbread from the Black Sea region. Dense, salty, and crumbly, often served with yogurt.", descTr: "Karadeniz bölgesine özgü، mısır unundan yapılan lezzetli bir ekmektir.", descFa: "نان ذرت مخصوص منطقه دریای سیاه، متراکم و بسیار خوش‌طعم است." },
+            { tr: "Paskalya Çöreği", en: "Easter Sweet Bread", fa: "نان گیس‌باف", img: "./images/img09.png", descEn: "Sweet braided bread flavored with mahleb and mastic. It is enjoyed for its soft texture and almond-topped crust.", descTr: "Mahlep ve sakızla tatlandırılan، örgü şeklinde tatlı bir çörek türüdür.", descFa: "نان شیرین گیس‌باف با عطر محلب و سقز." },
+            { tr: "Kandil Simidi", en: "Small Festival Rings", fa: "کاندیل سیمیدی", img: "./images/img10.png", descEn: "Small, crunchy savory rings coated in sesame or nigella seeds, baked for holy nights.", descTr: "Kandil gecelerine özel pişirilen gevrek küçük halka çöreklerdir.", descFa: "حلقه‌های کوچک و ترد کنجدی که در شب‌های متبرک مذهبی پخته می‌شوند." },
+            { tr: "Lavaş", en: "Lavash Flatbread", fa: "لواش", img: "./images/img11.png", descEn: "Thin, soft flatbread essential for wraps. It puffs up beautifully when baked in a traditional clay oven.", descTr: "Kebabların yanında kullanılan incecik ve yumuşak bir lavaş ekmeğidir.", descFa: "نان نازک و نرمی که برای تهیه لقمه‌های کباب استفاده می‌شود." },
+            { tr: "Trabzon Ekmeği", en: "Stone-Oven Bread", fa: "نان ترابزون", img: "./images/img12.png", descEn: "Massive sourdough loaf from the Trabzon region, baked in stone ovens to stay fresh for days.", descTr: "Trabzon'un Vakfıkebir ilçesine özgü taş fırınlarda pişen büyük bir ekmektir.", descFa: "نان غول‌پیکر و گردی از منطقه ترابزون." },
+            { tr: "Boyoz", en: "Izmir Flaky Pastry", fa: "بویوز", img: "./images/img13.png", descEn: "Unique flaky pastry from Izmir, traditionally eaten for breakfast with hard-boiled eggs.", descTr: "İzmir mutfağına özgü، mayasız ve yağlı bir hamur işidir.", descFa: "شیرینی لایه‌لایه‌ای مخصوص ازمیر." },
+            { tr: "Kumru", en: "Izmir Sandwich Bread", fa: "کومرو", img: "./images/img14.png", descEn: "Dove-shaped bread made with chickpea yeast, typically grilled for sandwiches.", descTr: "Nohut mayasıyla yapılan İzmir sandviç ekmeğidir.", descFa: "نان ساندویچی با مخمر نخود که به شکل کبوتر است." },
+            { tr: "Tahinli Çörek", en: "Tahini Sweet Roll", fa: "نان ارده‌ای", img: "./images/img15.png", descEn: "Sweet spiral pastry filled with tahini and sugar, rich and nutty.", descTr: "İçine tahin ve şeker sürülerek rulo yapılan bir چörektir.", descFa: "شیرینی مارپیچی پر شده با خمیر ارده و شکر." },
+            { tr: "Su Böreği", en: "Water Borek", fa: "سو بورگی", img: "./images/img16.png", descEn: "Complex pastry with sheets of boiled dough layered with butter and cheese.", descTr: "Hamur katمانlarının haşlanmasıyla yapılan çok özel bir börektir.", descFa: "بورکی که لایه‌های خمیر آن قبل از پخت جوشانده می‌شوند." },
+            { tr: "Sigara Böreği", en: "Cigarette Rolls", fa: "سیگارا بورگی", img: "./images/img17.png", descEn: "Cigar-shaped fried pastries filled with white cheese and parsley.", descTr: "Yufka içine peynir sarılarak kızartılan çıtır atıştırmalıklardır.", descFa: "بورک‌های ترد سرخ‌شده به شکل سیگار پر از پنیر." },
+            { tr: "Revani", en: "Semolina Cake", fa: "روانی", img: "./images/img18.png", descEn: "Classic Ottoman semolina sponge cake soaked in light sugar syrup.", descTr: "İrmik ile yapılan şerbetli klasik bir Türk tatlısıdır.", descFa: "کیک اسفنجی سمولینا غوطه‌ور در شربت." },
+            { tr: "Şekerpare", en: "Semolina Cookies", fa: "شکرپاره", img: "./images/img19.png", descEn: "Soft semolina cookies soaked in syrup, decorated with a whole hazelnut.", descTr: "Şerbetle tatlandırılan ağızda dağılan bir kurabiye tatlısıdır.", descFa: "شیرینی‌های گرد سمولینا در شربت." },
+            { tr: "Ay Çöreği", en: "Crescent Pastry", fa: "شیرینی هلالی", img: "./images/img20.png", descEn: "Crescent-shaped sweet pastry filled with cocoa, cake crumbs, raisins, and walnuts.", descTr: "İçi kakaolu ve fındıklı harçla dolu tatlı bir pastane klasiğidir.", descFa: "شیرینی هلالی شکلی با مغز کاکائو و گردو." },
+            { tr: "Çatal", en: "Savory Fork Pastry", fa: "شیرینی چنگالی", img: "./images/img21.png", descEn: "Dry, savory pastry flavored with mahleb and nigella seeds, shaped like a fork.", descTr: "Mahlepli tadı ve çatalı andıran şekliyle tuzlu bir kurabiyedir.", descFa: "شیرینی ترد و نمکی با طعم محلب." },
+            { tr: "Galeta", en: "Turkish Breadsticks", fa: "گالتا", img: "./images/img22.png", descEn: "Hard, twice-baked breadsticks, common as a healthy, crunchy snack.", descTr: "Kurutulmuş، gevrek bir atıştırmalık ekmek türüdür.", descFa: "چوب‌شورهای نانی یا نان‌های سوخاری بسیار ترد." },
+            { tr: "Zeytinli Ekmek", en: "Olive Bread", fa: "نان زیتون", img: "./images/img23.png", descEn: "Fragrant artisan loaf infused with savory black or green olives and oregano.", descTr: "İçine zeytin ve kekik katılarak hazırlanan lezzetli bir ekmektir.", descFa: "نانی معطر که با زیتون‌های سیاه یا سبز طعم‌دار شده است." },
+            { tr: "Tam Buğday Ekmeği", en: "Whole Wheat Bread", fa: "نان گندم کامل", img: "./images/img24.png", descEn: "Healthy fiber-rich alternative made from unrefined flour.", descTr: "Rafine edilmemiş buğday unundan yapılan sağlıklı bir ekmektir.", descFa: "نان گندم کامل سرشار از فیبر." },
+            { tr: "Çavdar Ekmeği", en: "Rye Bread", fa: "نان چاودار", img: "./images/img25.png", descEn: "Dark, aromatic bread made with rye flour, dense and slightly sour.", descTr: "Çavdar unundan yapılan koyu renkli aromatik bir ekmek türüdür.", descFa: "نان تیره و معطر تهیه شده از آرد چاودار." },
+            { tr: "Somun Ekmek", en: "Artisan Oval Loaf", fa: "نان صومون", img: "./images/img26.png", descEn: "Classic oval-shaped loaf with a thick crust, a bakery standard.", descTr: "Fırınlarda en çok satılan klasik oval ekmek türüdür.", descFa: "نان بیضی شکل معمولی رایج در نانوایی‌ها." },
+            { tr: "Tandır Ekmeği", en: "Tandoor Flatbread", fa: "نان تنوری", img: "./images/img27.png", descEn: "Rustic flatbread baked against the walls of a clay tandoor oven.", descTr: "Geleneksel toprak tandırlarda pişen mis kokulu köy ekmeğidir.", descFa: "نان سنتی پخته شده در تنورهای سفالی." },
+            { tr: "Susamlı Pide", en: "Sesame Flatbread", fa: "پیده کنجدی", img: "./images/img28.png", descEn: "Oval flatbread generously topped with sesame seeds for a nutty crunch.", descTr: "Bol susamlı fırından yeni çıkmış çıtır çıtır bir pidedir.", descFa: "نان پیده بلند و بیضی شکلی با پوشش کنجد." },
+            { tr: "Kol Böreği", en: "Spiral Savory Pastry", fa: "کول بورگی", img: "./images/img29.png", descEn: "Long spiral pastry rolls with crispy texture and meat or cheese fillings.", descTr: "Uzun ince hamurun rulo yapılıp pişirildiği bir börektir.", descFa: "بورک درازی که به صورت مارپیچ پیچیده شده است." },
+            { tr: "Laz Böreği", en: "Sweet Custard Filo", fa: "لاز بورگی", img: "./images/img30.png", descEn: "Sweet dessert with many filo layers filled with velvety custard and syrup.", descTr: "Karadeniz'e özgü içi muhallebi dolu şerbetli bir tatlıdır.", descFa: "شیرینی مخصوص منطقه دریای سیاه با کرم غلیظ و شربت." }
+        ];
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState(-1);
+            const [lang, setLang] = useState('en'); 
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [playbackRate, setPlaybackRate] = useState(1);
+            const [volume, setVolume] = useState(1);
+            const [isAudioLoading, setIsAudioLoading] = useState(false);
+            const [errorMsg, setErrorMsg] = useState(null);
+            const audioContextRef = useRef(null);
+            const sourceNodeRef = useRef(null);
+            const apiKey = ""; 
+
+            const pcmToWav = (pcmData, sampleRate) => {
+                const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+                const view = new DataView(buffer);
+                const writeString = (offset, string) => {
+                    for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+                };
+                writeString(0, 'RIFF');
+                view.setUint32(4, 32 + pcmData.length * 2, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, 1, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, sampleRate * 2, true);
+                view.setUint16(32, 2, true);
+                view.setUint16(34, 16, true);
+                writeString(36, 'data');
+                view.setUint32(40, pcmData.length * 2, true);
+                for (let i = 0; i < pcmData.length; i++) view.setInt16(44 + i * 2, pcmData[i], true);
+                return buffer;
+            };
+
+            const stopAudio = () => {
+                if (sourceNodeRef.current) {
+                    sourceNodeRef.current.stop();
+                    sourceNodeRef.current = null;
+                }
+                setIsPlaying(false);
+            };
+
+            const playTTS = async () => {
+                if (lang === 'fa') return;
+                if (isPlaying) { stopAudio(); return; }
+
+                setIsAudioLoading(true);
+                setErrorMsg(null);
+                const text = lang === 'en' ? breadData[currentPage].descEn : breadData[currentPage].descTr;
+                const voice = lang === 'en' ? 'Zephyr' : 'Kore';
+                const prompt = `Say clearly: ${text}`;
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                responseModalities: ["AUDIO"],
+                                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
+                            }
+                        })
+                    });
+
+                    const result = await response.json();
+                    const audioPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                    if (!audioPart) throw new Error("No audio data");
+
+                    const audioData = audioPart.inlineData.data;
+                    const mimeType = audioPart.inlineData.mimeType;
+                    const sampleRate = parseInt(mimeType.match(/sample_rate=(\d+)/)?.[1] || "24000");
+                    
+                    const binaryString = atob(audioData);
+                    const pcmData = new Int16Array(binaryString.length / 2);
+                    for (let i = 0; i < pcmData.length; i++) {
+                        pcmData[i] = binaryString.charCodeAt(i * 2) | (binaryString.charCodeAt(i * 2 + 1) << 8);
+                    }
+
+                    const wavBuffer = pcmToWav(pcmData, sampleRate);
+                    if (!audioContextRef.current) audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                    const audioBuffer = await audioContextRef.current.decodeAudioData(wavBuffer);
+                    
+                    const source = audioContextRef.current.createBufferSource();
+                    const gainNode = audioContextRef.current.createGain();
+                    
+                    source.buffer = audioBuffer;
+                    source.playbackRate.value = playbackRate;
+                    gainNode.gain.value = volume;
+                    
+                    source.connect(gainNode);
+                    gainNode.connect(audioContextRef.current.destination);
+                    
+                    source.onended = () => setIsPlaying(false);
+                    source.start();
+                    sourceNodeRef.current = source;
+                    setIsPlaying(true);
+                } catch (err) {
+                    console.error("Audio error", err);
+                    setErrorMsg("Audio error. Check API connection.");
+                } finally {
+                    setIsAudioLoading(false);
+                }
+            };
+
+            const nextPage = () => { stopAudio(); if (currentPage < breadData.length - 1) setCurrentPage(prev => prev + 1); };
+            const prevPage = () => { stopAudio(); if (currentPage > -1) setCurrentPage(prev => prev - 1); };
+
+            return (
+                <div className="min-h-screen bg-[#faf3e0] flex items-center justify-center p-4">
+                    <div className="max-w-6xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[700px] border-[12px] border-[#8d5524]">
+                        
+                        {currentPage === -1 ? (
+                            <div className="w-full flex flex-col items-center justify-center p-12 bg-[#e6be8a] text-center space-y-8">
+                                <div className="w-48 h-48 bg-[#8d5524] rounded-full flex items-center justify-center text-white shadow-2xl animate-bounce">
+                                    <BookOpen size={96} />
+                                </div>
+                                <div>
+                                    <h1 className="text-6xl font-black text-[#5d3a1a] mb-2 tracking-tight">Scent of Istanbul</h1>
+                                    <h2 className="text-3xl font-bold text-[#8d5524] opacity-90">عطر نانوایی‌های استانبول</h2>
+                                    <p className="mt-6 text-stone-700 font-medium text-lg">A Digital Guide to 30 Authentic Turkish Breads & Pastries</p>
+                                </div>
+                                <div className="flex gap-4">
+                                    {['en', 'tr', 'fa'].map(l => (
+                                        <button key={l} onClick={() => setLang(l)} className={`px-5 py-2 rounded-xl text-sm font-bold border-2 transition-all ${lang === l ? 'bg-[#8d5524] text-white border-[#8d5524]' : 'border-[#8d5524] text-[#8d5524] hover:bg-white/50'}`}>{l.toUpperCase()}</button>
+                                    ))}
+                                </div>
+                                <button onClick={nextPage} className="px-12 py-5 bg-[#5d3a1a] hover:bg-[#3e2611] text-white rounded-full transition-all flex items-center gap-4 text-2xl shadow-xl transform hover:scale-105">
+                                    Explore the Bakery <ChevronLeft />
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="w-full md:w-1/2 bg-stone-100 relative group overflow-hidden flex flex-col items-center justify-center">
+                                    <img 
+                                        src={breadData[currentPage].img} 
+                                        alt={breadData[currentPage].tr} 
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                        onError={(e) => { e.target.src = "https://via.placeholder.com/800x800?text=Bread+Image"; }}
+                                    />
+                                    
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] glass rounded-3xl p-5 flex flex-col gap-4 shadow-2xl">
+                                        <div className="flex items-center justify-between gap-6">
+                                            <button onClick={playTTS} disabled={lang === 'fa' || isAudioLoading} className={`p-4 rounded-full shadow-lg transition-all ${lang === 'fa' ? 'bg-stone-300 opacity-50' : 'bg-[#8d5524] hover:bg-[#5d3a1a] text-white'}`}>
+                                                {isAudioLoading ? <Loader2 className="animate-spin" size={28} /> : (isPlaying ? <Pause size={28} /> : <Play size={28} />)}
+                                            </button>
+                                            
+                                            <div className="flex-1 space-y-2" dir="ltr">
+                                                <div className="flex items-center gap-3">
+                                                    <Volume2 size={18} className="text-stone-700" />
+                                                    <input type="range" min="0" max="1" step="0.1" value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))} className="w-full h-2 rounded-lg appearance-none cursor-pointer" />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 bg-white/60 px-4 py-2 rounded-2xl border border-white/50" dir="ltr">
+                                                <FastForward size={18} className="text-stone-700" />
+                                                <select value={playbackRate} onChange={(e) => setPlaybackRate(parseFloat(e.target.value))} className="bg-transparent text-sm font-black outline-none cursor-pointer">
+                                                    <option value="0.8">0.8x</option><option value="1">1.0x</option><option value="1.2">1.2x</option><option value="1.5">1.5x</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {errorMsg && <p className="text-[11px] text-center text-red-600 font-bold">{errorMsg}</p>}
+                                        {lang === 'fa' && <p className="text-[11px] text-center text-stone-900 font-bold opacity-70">Audio available for EN and TR only</p>}
+                                    </div>
+                                </div>
+
+                                <div className="w-full md:w-1/2 p-10 flex flex-col bg-[#fffefc] overflow-y-auto max-h-[800px]">
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-center mb-8">
+                                            <div className="flex gap-2">
+                                                {['en', 'tr', 'fa'].map(l => (
+                                                    <button key={l} onClick={() => { stopAudio(); setLang(l); }} className={`w-10 h-10 flex items-center justify-center rounded-xl text-xs font-black border-2 transition-all ${lang === l ? 'bg-[#8d5524] text-white border-[#8d5524] shadow-md' : 'text-stone-400 border-stone-100 hover:border-stone-300'}`}>{l.toUpperCase()}</button>
+                                                ))}
+                                            </div>
+                                            <span className="text-stone-300 font-mono font-bold">{currentPage + 1} / {breadData.length}</span>
+                                        </div>
+
+                                        <div className="mb-10 animate-fade-in">
+                                            <h2 className="text-5xl font-black text-[#5d3a1a] mb-2 leading-tight">
+                                                {lang === 'en' ? breadData[currentPage].en : (lang === 'tr' ? breadData[currentPage].tr : breadData[currentPage].fa)}
+                                            </h2>
+                                            <div className="flex gap-4 text-stone-400 font-bold italic tracking-wide" dir="ltr">
+                                                <span className="text-[#8d5524]">TR: {breadData[currentPage].tr}</span>
+                                                <span className="opacity-30">|</span>
+                                                <span>EN: {breadData[currentPage].en}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="prose prose-stone max-w-none">
+                                            <p className="text-xl leading-relaxed text-stone-700 text-justify font-medium">
+                                                {lang === 'en' ? breadData[currentPage].descEn : (lang === 'tr' ? breadData[currentPage].descTr : breadData[currentPage].descFa)}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-12 pt-8 border-t-2 border-stone-50" dir="ltr">
+                                        <div className="bg-stone-50/80 p-6 rounded-3xl mb-8 border border-stone-100">
+                                            <h4 className="text-sm font-black text-[#8d5524] mb-4 flex items-center gap-2 uppercase tracking-widest">
+                                                <Info size={16} /> Technical Developer
+                                            </h4>
+                                            <div className="grid grid-cols-1 gap-3">
+                                                <div className="text-stone-900 font-black text-lg">Faramarz Kowsari</div>
+                                                <a href="mailto:info@faramarzkowsari.com" className="flex items-center gap-3 text-stone-600 hover:text-[#8d5524] transition-colors font-medium">
+                                                    <Mail /> info@faramarzkowsari.com
+                                                </a>
+                                                <a href="https://linkedin.com/in/faramarzkowsari" target="_blank" className="flex items-center gap-3 text-stone-600 hover:text-[#8d5524] transition-colors font-medium">
+                                                    <Linkedin /> linkedin.com/in/faramarzkowsari
+                                                </a>
+                                                <a href="https://play.google.com/store/search?q=Faramarz_Kowsari&c=books" target="_blank" className="flex items-center gap-3 text-stone-600 hover:text-[#8d5524] transition-colors font-medium">
+                                                    <ExternalLink /> Books on Google Play
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between" dir="rtl">
+                                            <button onClick={prevPage} className="p-4 bg-stone-100 rounded-2xl hover:bg-stone-200 text-stone-600 transition-all hover:scale-105">
+                                                <ChevronRight />
+                                            </button>
+                                            <div className="text-[10px] text-stone-300 font-black uppercase tracking-[0.2em]">Istanbul Bakery © 2024</div>
+                                            <button onClick={nextPage} disabled={currentPage === breadData.length - 1} className={`p-4 rounded-2xl transition-all hover:scale-105 ${currentPage === breadData.length - 1 ? 'bg-stone-50 text-stone-200 cursor-not-allowed' : 'bg-stone-100 hover:bg-stone-200 text-stone-600'}`}>
+                                                <ChevronLeft />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

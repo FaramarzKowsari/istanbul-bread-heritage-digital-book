@@ -18,6 +18,7 @@
         .nav-btn { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); color: white; transition: all 0.3s; }
         .nav-btn:hover { background: rgba(141, 85, 36, 0.8); transform: scale(1.1); }
         .nav-btn:disabled { opacity: 0.1; cursor: not-allowed; }
+        select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d5524' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 0.5rem center; background-size: 1em; }
     </style>
 </head>
 <body>
@@ -38,6 +39,9 @@
         const Linkedin = ({size=14}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>;
         const ExternalLink = ({size=14}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 22 3 22 10"/><line x1="10" x2="22" y1="14" y2="2"/></svg>;
         const Info = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const Home = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+        const List = ({size=24}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>;
+        const Loader2 = ({size=24, className=""}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>;
 
         const breadData = [
             { tr: "Simit", en: "Turkish Sesame Bagel", fa: "سیمیت", img: "./images/img01.png", descEn: "Simit is the most iconic Turkish street food, a circular bread encrusted with sesame seeds. Before baking, it is dipped in grape molasses (pekmez), which gives it its characteristic dark golden color and slightly sweet-savory crust. It has been a staple of Istanbul life since the 16th century.", descTr: "Simit, pekmeze batırılıp susamla kaplanarak pişirilen, halka şeklindeki çıtır ekmektir.", descFa: "سیمیت نان حلقه‌ای تردی است که با شیره انگور آغشته و در کنجد فراوان غلتانده می‌شود." },
@@ -121,6 +125,7 @@
 
             const nextPage = () => { if (currentPage < breadData.length - 1) setCurrentPage(prev => prev + 1); };
             const prevPage = () => { if (currentPage > -1) setCurrentPage(prev => prev - 1); };
+            const goHome = () => setCurrentPage(-1);
 
             return (
                 <div className="min-h-screen bg-[#faf3e0] flex items-center justify-center p-4">
@@ -202,6 +207,33 @@
 
                                 <div className="w-full md:w-1/2 p-10 flex flex-col bg-[#fffefc] overflow-y-auto max-h-[800px]">
                                     <div className="flex-1">
+                                        {/* Header Controls: Home and Select Menu */}
+                                        <div className="flex items-center justify-between mb-6 border-b border-stone-100 pb-4">
+                                            <button 
+                                                onClick={goHome}
+                                                className="flex items-center gap-2 text-[#8d5524] hover:text-[#5d3a1a] font-bold text-sm transition-colors"
+                                                title="صفحه اصلی"
+                                            >
+                                                <Home size={20} />
+                                                <span>HOME</span>
+                                            </button>
+
+                                            <div className="flex items-center gap-2 relative">
+                                                <List size={18} className="text-[#8d5524]" />
+                                                <select 
+                                                    value={currentPage} 
+                                                    onChange={(e) => setCurrentPage(parseInt(e.target.value))}
+                                                    className="bg-stone-50 border border-stone-200 rounded-lg px-8 py-1 text-xs font-bold text-stone-600 focus:outline-none focus:ring-1 focus:ring-[#8d5524] cursor-pointer"
+                                                >
+                                                    {breadData.map((bread, index) => (
+                                                        <option key={index} value={index}>
+                                                            {index + 1}. {lang === 'en' ? bread.en : (lang === 'tr' ? bread.tr : bread.fa)}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div className="flex justify-between items-center mb-8">
                                             <div className="flex gap-2">
                                                 {['en', 'tr', 'fa'].map(l => (

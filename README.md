@@ -3,7 +3,13 @@
 
 
 <p align="center">
-  <img src="YOUR_IMAGE_LINK_HERE" width="700">
+  <a href="https://faramarzkowsari.github.io/istanbul-bread-heritage-interactive-digital-book/">
+    <img
+      src="./bread-heritage.jpg"
+      alt="The Bread Heritage of Istanbul — Interactive Trilingual Digital Book"
+      width="100%"
+    />
+  </a>
 </p>
 
 <a href="https://doi.org/10.5281/zenodo.21396781">

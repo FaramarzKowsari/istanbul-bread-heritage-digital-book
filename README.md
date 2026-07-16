@@ -6,6 +6,13 @@
   <img src="YOUR_IMAGE_LINK_HERE" width="700">
 </p>
 
+<a href="https://doi.org/10.5281/zenodo.21396781">
+  <img
+    src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21396781-1682D4?style=for-the-badge"
+    alt="DOI: 10.5281/zenodo.21396781"
+  />
+</a>
+
 
 ## 🌍 About This Project
 

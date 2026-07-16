@@ -3,6 +3,12 @@ message: "Please cite this digital heritage project."
 
 title: "The Bread Heritage of Istanbul: An Interactive Trilingual Digital Book"
 
+version: "1.0.0"
+
+doi: "10.5281/zenodo.21396781"
+
+repository-code: "https://github.com/FaramarzKowsari/istanbul-bread-heritage-digital-book"
+
 authors:
   - family-names: "Kowsari"
     given-names: "Faramarz"
